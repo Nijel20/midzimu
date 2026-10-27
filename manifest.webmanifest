@@ -1,0 +1,9 @@
+{
+  "name": "Midzimu — Echoes of the Ancestors",
+  "short_name": "Midzimu",
+  "description": "A private, offline-first family oral-history archive.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f5ec",
+  "theme_color": "#183c32"
+}

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#183c32" />
+    <meta name="description" content="A private, offline-first home for the stories, wisdom, and memories your family wants to keep." />
+    <title>Midzimu — Echoes of the Ancestors</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Midzimu home">
+        <span class="brand-mark" aria-hidden="true">m</span>
+        <span>midzimu<span class="brand-period">.</span></span>
+      </a>
+      <div class="topbar-note"><span class="status-dot"></span> Your stories stay on this device</div>
+      <button class="button button-quiet" id="backup-button" type="button">Save a backup</button>
+      <input id="import-file" class="visually-hidden" type="file" accept="application/json,.json" />
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span aria-hidden="true">✳</span> A living family archive</p>
+          <h1 id="page-title">The voices we carry,<br /><em>the stories we keep.</em></h1>
+          <p class="hero-description">A quiet place for the memories, sayings, and ways of doing things that make your family yours. Kept close, on your own device.</p>
+          <button class="button button-light" id="new-story-button" type="button"><span aria-hidden="true">＋</span> Preserve a story</button>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="arch arch-back"></div>
+          <div class="arch arch-front"></div>
+          <span class="art-star star-one">✳</span>
+          <span class="art-star star-two">✳</span>
+          <span class="art-caption">Memory is a kind of home.</span>
+        </div>
+      </section>
+
+      <section class="archive" aria-labelledby="archive-title">
+        <div class="archive-heading">
+          <div>
+            <p class="eyebrow eyebrow-dark">Gathered with care</p>
+            <h2 id="archive-title">The family archive <span id="story-count" class="count">0 stories</span></h2>
+          </div>
+          <label class="search-box">
+            <span class="visually-hidden">Search stories</span>
+            <span aria-hidden="true">⌕</span>
+            <input id="search-input" type="search" placeholder="Find a memory…" autocomplete="off" />
+          </label>
+        </div>
+
+        <nav class="filters" aria-label="Filter stories">
+          <button class="filter-chip is-active" data-filter="all" type="button" aria-pressed="true">Everything</button>
+          <button class="filter-chip" data-filter="Memory" type="button" aria-pressed="false">Memories</button>
+          <button class="filter-chip" data-filter="Proverb" type="button" aria-pressed="false">Proverbs &amp; sayings</button>
+          <button class="filter-chip" data-filter="Practice" type="button" aria-pressed="false">Traditions &amp; practices</button>
+          <button class="filter-chip" data-filter="Recipe" type="button" aria-pressed="false">Food &amp; recipes</button>
+        </nav>
+
+        <div id="story-list" class="story-grid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><span aria-hidden="true">✳</span> Built for the stories only your family can tell.</p>
+      <button id="privacy-button" class="text-button" type="button">A note on privacy</button>
+    </footer>
+
+    <dialog id="story-dialog" class="story-dialog" aria-labelledby="dialog-title">
+      <form id="story-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow eyebrow-dark">Add to your family archive</p>
+            <h2 id="dialog-title">Preserve a story</h2>
+          </div>
+          <button id="close-dialog" class="icon-button" type="button" aria-label="Close">×</button>
+        </div>
+
+        <input id="story-id" type="hidden" />
+        <div class="form-grid">
+          <label class="field field-wide">Story title <span class="required-mark">*</span>
+            <input id="story-title" name="title" maxlength="120" required placeholder="A name you'll remember" />
+          </label>
+          <label class="field">Told by
+            <input id="storyteller" name="storyteller" maxlength="100" placeholder="Their name or nickname" />
+          </label>
+          <label class="field">Story kind
+            <select id="category" name="category">
+              <option>Memory</option><option>Proverb</option><option>Practice</option><option>Recipe</option><option>Song</option><option>Other</option>
+            </select>
+          </label>
+          <label class="field">Language
+            <input id="language" name="language" maxlength="60" placeholder="e.g. Shona, English" />
+          </label>
+          <label class="field">When it happened
+            <input id="story-date" name="storyDate" type="date" />
+          </label>
+          <label class="field field-wide">The story, in their own words <span class="required-mark">*</span>
+            <textarea id="transcript" name="transcript" rows="7" required placeholder="Write or paste a transcript. Keep their words as they told them."></textarea>
+          </label>
+          <label class="field field-wide">A saying, phrase, or detail to remember
+            <input id="proverb" name="proverb" maxlength="300" placeholder="Optional — a phrase in the original language is welcome" />
+          </label>
+          <label class="field field-wide">Recording <span class="field-hint">Audio is saved only in this browser on this device.</span>
+            <div class="recording-controls">
+              <button id="record-button" class="button button-outline" type="button"><span aria-hidden="true">●</span> Record audio</button>
+              <label class="button button-outline upload-label">Choose an audio file<input id="audio-file" class="visually-hidden" type="file" accept="audio/*" /></label>
+              <button id="clear-audio" class="text-button hidden" type="button">Remove recording</button>
+            </div>
+            <p id="recording-status" class="field-hint" role="status"></p>
+            <audio id="audio-preview" class="audio-preview hidden" controls></audio>
+          </label>
+        </div>
+
+        <details class="ai-panel">
+          <summary><span class="ai-spark" aria-hidden="true">✳</span> Local AI story helper <span class="optional-label">optional</span></summary>
+          <p>Ask a model running on your own computer to summarize, suggest themes, or translate. Your story is sent only to Ollama on this device, never to a cloud AI.</p>
+          <div class="ai-settings">
+            <label class="field">Ollama address<input id="ollama-url" type="url" value="http://localhost:11434" /></label>
+            <label class="field">Local model<input id="ollama-model" maxlength="100" value="gemma3:1b" /></label>
+            <label class="field field-wide">Translate into <input id="target-language" maxlength="60" placeholder="Leave empty to skip translation" /></label>
+          </div>
+          <button id="organize-button" class="button button-green" type="button">Organize with local AI</button>
+          <span id="ai-status" class="field-hint" role="status"></span>
+          <label class="field ai-result">AI summary <textarea id="summary" rows="3" maxlength="1200" placeholder="A short summary will appear here. You can edit it."></textarea></label>
+          <label class="field ai-result">Translation <textarea id="translation" rows="3" maxlength="4000" placeholder="Translation stays separate from the original words."></textarea></label>
+          <p class="field-hint">AI suggestions can be wrong. Check translations with a fluent speaker; the original is never changed.</p>
+        </details>
+
+        <div class="dialog-actions">
+          <button id="cancel-dialog" class="button button-quiet" type="button">Cancel</button>
+          <button class="button button-green" type="submit">Keep this story</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="privacy-dialog" class="privacy-dialog">
+      <div class="dialog-heading">
+        <div><p class="eyebrow eyebrow-dark">Your stories belong to you</p><h2>A note on privacy</h2></div>
+        <button id="close-privacy" class="icon-button" type="button" aria-label="Close">×</button>
+      </div>
+      <p>Stories and recordings are saved in this browser's local storage on this device. Nothing is uploaded or synced. Clear browser data and you may lose your archive, so use <strong>Save a backup</strong> to keep a copy somewhere you trust.</p>
+      <p>The optional AI helper sends story text to the Ollama service at the address shown in the form. Use a local Ollama instance; this app does not connect to a hosted AI service.</p>
+      <button id="privacy-done" class="button button-green" type="button">Understood</button>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
